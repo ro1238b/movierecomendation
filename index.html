@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Recommendation System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: #0f172a;
+            font-family: 'Montserrat', sans-serif;
+            color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+    <div class="bg-slate-800 p-10 rounded-2xl shadow-xl w-full max-w-2xl">
+        <h1 class="text-3xl font-semibold text-center text-cyan-400 mb-6">
+            🎬 Movie Recommendation System
+        </h1>
+
+        <form action="/recommend" method="post" class="space-y-6">
+            <label for="movie" class="block text-lg text-white font-medium">Enter a movie name:</label>
+            
+            <!-- 🔧 Wrap input + suggestions in a relative div -->
+            <div class="relative">
+                <input type="text" name="movie" id="movie" autocomplete="off"
+                    class="w-full px-4 py-2 rounded bg-gray-800 border border-gray-700 text-white"
+                    placeholder="Enter a movie name..." required />
+                
+                <!-- Suggestions dropdown -->
+                <ul id="suggestions" class="hidden absolute top-full mt-1 bg-white text-black w-full rounded shadow-md z-50"></ul>
+            </div>
+
+            <button type="submit"
+                class="w-full py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition">
+                Get Recommendations
+            </button>
+        </form>
+
+        <p class="text-sm text-slate-400 text-center mt-6">
+            Powered by BERT & Python 🧠
+        </p>
+    </div>
+
+    <script>
+        const input = document.getElementById("movie");
+        const suggestionsBox = document.getElementById("suggestions");
+
+        input.addEventListener("input", async () => {
+            const query = input.value.trim();
+            if (!query) {
+                suggestionsBox.innerHTML = "";
+                suggestionsBox.classList.add("hidden");
+                return;
+            }
+
+            const res = await fetch(`/suggest?q=${encodeURIComponent(query)}`);
+            const suggestions = await res.json();
+
+            if (suggestions.length === 0) {
+                suggestionsBox.classList.add("hidden");
+                return;
+            }
+
+            suggestionsBox.innerHTML = suggestions.map(title =>
+                `<li class="px-4 py-2 hover:bg-gray-200 cursor-pointer" onclick="selectSuggestion('${title}')">${title}</li>`
+            ).join('');
+            suggestionsBox.classList.remove("hidden");
+        });
+
+        function selectSuggestion(title) {
+            input.value = title;
+            suggestionsBox.classList.add("hidden");
+        }
+
+        // Optional: Hide suggestions when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!input.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.add("hidden");
+            }
+        });
+    </script>
+</body>
+</html>

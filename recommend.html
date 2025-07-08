@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Recommendations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white px-6 py-8 min-h-screen">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-3xl font-bold text-cyan-400 mb-6 text-center">
+            Recommended Movies for "{{ movie }}"
+        </h1>
+
+        {% if recommendations and recommendations|length > 0 %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {% for rec in recommendations %}
+            <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg">
+                <img src="{{ rec.poster_url }}" alt="{{ rec.title }}" class="w-full h-80 object-cover">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-cyan-300 mb-2">{{ rec.title }}</h2>
+                    <p class="text-gray-300 text-sm">{{ rec.overview }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-red-400 text-lg text-center mt-8">
+            Sorry, no recommendations found for "<strong>{{ movie }}</strong>". Try a different movie.
+        </p>
+        {% endif %}
+
+        {% if original_input %}
+        <p class="mt-10 text-gray-400 text-center">
+            Original Input: "{{ original_input }}"
+        </p>
+        {% endif %}
+
+        <div class="text-center mt-6">
+            <a href="/" class="inline-block bg-cyan-500 hover:bg-cyan-600 px-6 py-2 rounded-xl text-white text-lg">
+                Back to Search
+            </a>
+        </div>
+    </div>
+</body>
+</html>
